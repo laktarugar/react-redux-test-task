@@ -6,15 +6,9 @@ import React, { Component, PropTypes } from 'react';
 
 
 class UserList extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      items: this.props.items || []
-    };
-  }
 
   render() {
-    const {items} = this.state;
+    const {items} = this.props;
 
     console.log('state items', items);
 

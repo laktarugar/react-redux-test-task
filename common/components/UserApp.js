@@ -6,30 +6,19 @@ import UserLists from './UserLists';
 import UserEditForm from './UserEditForm';
 
 class UserApp extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      list: this.props.list || [],
-      newUser: this.props.newUser || {}
-    };
-  }
-
   render() {
-    let { list, newUser } = this.state;
+    let { list, newUser, addUser } = this.props;
+
+    console.log(this.props);
 
     return (
       <div>
         <h3>User create form</h3>
-        <UserEditForm user={newUser} saveAction={this.saveAction.bind(this)}></UserEditForm>
+        <UserEditForm user={newUser} saveAction={user => addUser(user)}></UserEditForm>
         <hr/>
         <UserLists items={list}></UserLists>
       </div>
     );
-  }
-
-  saveAction(user) {
-    dispatch(this.props.addUser(user));
-    alert('save' + user);
   }
 }
 

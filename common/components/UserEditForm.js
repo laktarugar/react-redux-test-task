@@ -17,6 +17,8 @@ class UserEditForm extends Component {
   render() {
     const { user, saveAction} = this.props;
 
+    console.log('user', user);
+
     return (
       <form method="POST" onChange={this.changeAction.bind(this)} onSubmit={this.submitAction.bind(this)}>
         <div>
@@ -37,16 +39,14 @@ class UserEditForm extends Component {
 
   changeAction(e) {
     e.preventDefault();
-    let name = React.findDOMNode(this.refs.name).value.trim();
-    let email = React.findDOMNode(this.refs.email).value.trim();
+    let nameEl = React.findDOMNode(this.refs.name);
+    let emailEl = React.findDOMNode(this.refs.email);
 
     //@todo some check
 
-    let user = new User(name, email);
+    let user = new User(nameEl.value.trim(), emailEl.value.trim());
 
     this.setState({user});
-
-    console.log(this.state);
   }
 
   submitAction(e) {
@@ -54,6 +54,11 @@ class UserEditForm extends Component {
     console.log('submit');
     console.log(this.state.user);
     this.props.saveAction(this.state.user);
+
+    let nameEl = React.findDOMNode(this.refs.name);
+    let emailEl = React.findDOMNode(this.refs.email);
+    nameEl.value = '';
+    emailEl.value = '';
   }
 }
 
