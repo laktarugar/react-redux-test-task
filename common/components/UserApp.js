@@ -9,12 +9,10 @@ class UserApp extends Component {
   render() {
     let { list, newUser, addUser } = this.props;
 
-    console.log(this.props);
-
     return (
       <div>
         <h3>User create form</h3>
-        <UserEditForm user={newUser} saveAction={user => addUser(user)}></UserEditForm>
+        <UserEditForm user={newUser}></UserEditForm>
         <hr/>
         <UserLists items={list}></UserLists>
       </div>

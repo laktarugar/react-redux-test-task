@@ -2,6 +2,7 @@
 
 import path from 'path';
 import Express from 'express';
+import bodyParser  from 'body-parser';
 import qs from 'qs';
 
 import React from 'react';
@@ -12,26 +13,53 @@ import UserApp from '../common/containers/UserApp';
 import { fetchCounter } from '../common/api/counter';
 
 import User from '../common/model/User';
+import { addWithCheck } from '../common/actions/user';
 import { defaultState } from '../common/reducers/userReducer.js'
 
 const app = new Express();
 const port = 3000;
 
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+}));
+
+
 // Use this middleware to server up static files built into dist
 app.use(require('serve-static')(path.join(__dirname, '../dist')));
+
+app.post('/', function (req, res) {
+  console.log('test act post', req.body);
+
+  let newUser = new User(req.body.name, req.body.email);
+  const initialState = {
+    user: Object.assign({}, defaultState, {
+      newUser,
+      list: [
+        {name: 123, email: 'test1@test.com'},
+        {name: 444, email: 'test2@test.com'},
+      ]
+    })
+  };
+
+  // Create a new Redux store instance
+  let store = configureStore(initialState);
+  //console.log(store.dispatch(addWithCheck(newUser)));
+  store.dispatch(addWithCheck(newUser))
+    .catch(
+      (data) => {
+        console.error('some error', data);
+        Promise.resolve();
+      }
+    )
+    .then(() => renderResponse(store, res));
+
+});
 
 // This is fired every time the server side receives a request
 app.use(handleRender);
 
 function handleRender(req, res) {
-
-  //console.log(res);
-
   let newUser = new User('', 'test@test.test');
-
-
-  // Read the counter from the request, if provided
-  const params = qs.parse(req.query);
   // Compile an initial state
   const initialState = {
     user: Object.assign({}, defaultState, {
@@ -44,7 +72,12 @@ function handleRender(req, res) {
   };
 
   // Create a new Redux store instance
-  const store = configureStore(initialState);
+  let store = configureStore(initialState);
+
+  renderResponse(store, res);
+}
+
+function renderResponse(store, res) {
 
   // Render the component to a string
   const html = React.renderToString(

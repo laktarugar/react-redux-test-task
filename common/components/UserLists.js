@@ -10,8 +10,6 @@ class UserList extends Component {
   render() {
     const {items} = this.props;
 
-    console.log('state items', items);
-
     let listsHtml = items.map((item, index) => {
       return (
         <li key={index}>

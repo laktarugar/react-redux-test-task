@@ -7,7 +7,6 @@ import UserApp from '../components/UserApp';
 import * as UserActions from '../actions/user';
 
 function mapStateToProps(state) {
-  console.log('mapStateToProps', state);
   return {
     newUser: state.user.newUser,
     list: state.user.list

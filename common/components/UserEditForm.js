@@ -37,7 +37,7 @@ class UserEditForm extends Component {
         {!isValid && <div>Form invalid</div>}
         <div>
           <label>Name</label>
-          <input type="text" defaultValue={user.name} ref="name"></input>
+          <input type="text" name="name" defaultValue={user.name} ref="name"></input>
           {!!validErrors && validErrors.name && !!validErrors.name.length && <div>
             <h6>Error</h6>
             <p>{validErrors.name.join(<br/>)}</p>
@@ -46,7 +46,7 @@ class UserEditForm extends Component {
 
         <div>
           <label>Email</label>
-          <input type="email" required defaultValue={user.email} ref="email"></input>
+          <input type="email" name="email" required defaultValue={user.email} ref="email"></input>
         </div>
 
         <button type="submit">Save!</button>
@@ -71,9 +71,7 @@ class UserEditForm extends Component {
 
   submitAction(e) {
     e.preventDefault();
-    console.log('submit');
-    console.log(this.state.user);
-    //console.log(this.props.saveAction(this.state.user));
+
     this.props.saveAction(this.state.user).then(
       (data) => {
         let nameEl = React.findDOMNode(this.refs.name);

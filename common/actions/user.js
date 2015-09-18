@@ -22,8 +22,8 @@ export function addUser(user) {
 export function addWithCheck(user) {
   return (dispatch, getState) => {
     dispatch(checkUser(user));
+
     let state = getState();
-    console.log('state', state);
     if (!!state.user.isValid) {
       dispatch(addUser(user));
       return Promise.resolve('ok');
