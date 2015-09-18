@@ -3,7 +3,6 @@
  */
 
 export const CHECK_USER = 'CHECK_USER';
-export const ADD_USER = 'ADD_USER';
 
 export function checkUser(user) {
   return {
@@ -12,9 +11,24 @@ export function checkUser(user) {
   }
 }
 
+export const ADD_USER = 'ADD_USER';
 export function addUser(user) {
   return {
     type: ADD_USER,
     user
+  }
+}
+
+export function addWithCheck(user) {
+  return (dispatch, getState) => {
+    dispatch(checkUser(user));
+    let state = getState();
+    console.log('state', state);
+    if (!!state.user.isValid) {
+      dispatch(addUser(user));
+      return Promise.resolve('ok');
+    } else {
+      return Promise.reject('fail');
+    }
   }
 }

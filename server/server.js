@@ -11,7 +11,8 @@ import configureStore from '../common/store/configureStore';
 import UserApp from '../common/containers/UserApp';
 import { fetchCounter } from '../common/api/counter';
 
-import User from '../common/api/User';
+import User from '../common/model/User';
+import { defaultState } from '../common/reducers/userReducer.js'
 
 const app = new Express();
 const port = 3000;
@@ -26,19 +27,20 @@ function handleRender(req, res) {
 
   //console.log(res);
 
-  let newUser = new User('tester', 'test@test.test');
+  let newUser = new User('', 'test@test.test');
+
 
   // Read the counter from the request, if provided
   const params = qs.parse(req.query);
   // Compile an initial state
   const initialState = {
-    user: {
+    user: Object.assign({}, defaultState, {
       newUser,
       list: [
         {name: 123, email: 'test1@test.com'},
         {name: 444, email: 'test2@test.com'},
       ]
-    }
+    })
   };
 
   // Create a new Redux store instance
