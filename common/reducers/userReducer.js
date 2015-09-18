@@ -2,7 +2,7 @@
  * Created by alexanderklimenko on 9/17/15.
  */
 
-import { CHECK_USER, ADD_USER, ERR_ADD_USER } from '../actions/user';
+import { CHECK_USER, ADD_USER, ERR_ADD_USER, FETCH_USERS } from '../actions/user';
 import User from '../model/User';
 
 export const defaultState = {
@@ -29,6 +29,11 @@ export default function userReducer(state = defaultState, action) {
         isValid,
         validErrors
       });
+
+     case FETCH_USERS:
+       return Object.assign({}, state, {
+         list: action.users
+       });
 
     case ERR_ADD_USER:
           return Object.assign({}, state, {

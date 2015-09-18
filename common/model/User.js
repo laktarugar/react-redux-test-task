@@ -6,7 +6,8 @@ import superagent from 'superagent';
 import config from '../config';
 let userList = [];
 
-export const USER_API_URL = '/api/user';
+// @TODO remove hack with 'http://localhost:3000'
+export const USER_API_URL = 'http://localhost:3000/api/user';
 
 class User {
   constructor(name, email) {
@@ -43,7 +44,6 @@ class User {
     return new Promise((resolve, reject) => {
       superagent
         .get(USER_API_URL)
-        .send()
         .end((err, res) => {
           if (res.ok) {
             resolve(res.body);

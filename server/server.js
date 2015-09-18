@@ -14,7 +14,7 @@ import UserApp from '../common/containers/UserApp';
 import { fetchCounter } from '../common/api/counter';
 
 import User from '../common/model/User';
-import { addWithCheck } from '../common/actions/user';
+import { addWithCheck, fetchUsers } from '../common/actions/user';
 import { defaultState } from '../common/reducers/userReducer.js'
 
 const app = new Express();
@@ -23,6 +23,15 @@ const port = 3000;
 import httpProxy from 'http-proxy';
 
 const proxy = httpProxy.createProxyServer({target: "http://localhost:3002"});
+
+let newUser = new User();
+// Compile an initial state
+let initialState = {
+  user: Object.assign({}, defaultState, {
+    newUser,
+    list: []
+  })
+};
 
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
@@ -45,10 +54,7 @@ app.post('/', function (req, res) {
   const initialState = {
     user: Object.assign({}, defaultState, {
       newUser,
-      list: [
-        {name: 123, email: 'test1@test.com'},
-        {name: 444, email: 'test2@test.com'},
-      ]
+      list: []
     })
   };
 
@@ -70,17 +76,6 @@ app.post('/', function (req, res) {
 app.use(handleRender);
 
 function handleRender(req, res) {
-  let newUser = new User('', 'test@test.test');
-  // Compile an initial state
-  const initialState = {
-    user: Object.assign({}, defaultState, {
-      newUser,
-      list: [
-        {name: 123, email: 'test1@test.com'},
-        {name: 444, email: 'test2@test.com'},
-      ]
-    })
-  };
 
   // Create a new Redux store instance
   const store = configureStore(initialState);
@@ -90,17 +85,23 @@ function handleRender(req, res) {
 
 function renderResponse(store, res) {
 
-  // Render the component to a string
-  const html = React.renderToString(
-    <Provider store={store}>
-      { () => <UserApp/>}
-    </Provider>);
+  store.dispatch(fetchUsers()).then(
+    ()=> {
+      // Render the component to a string
+      const html = React.renderToString(
+        <Provider store={store}>
+          { () => <UserApp/>}
+        </Provider>);
 
-  // Grab the initial state from our Redux store
-  const finalState = store.getState();
+      // Grab the initial state from our Redux store
+      const finalState = store.getState();
 
-  // Send the rendered page back to the client
-  res.send(renderFullPage(html, finalState));
+      // Send the rendered page back to the client
+      res.send(renderFullPage(html, finalState));
+    }, (data) => {
+      res.send('error' + JSON.stringify( data ));
+    }
+  );
 }
 
 function renderFullPage(html, initialState) {
