@@ -8,13 +8,20 @@
 import path from 'path';
 import Express from 'express';
 import qs from 'qs';
+import bodyParser  from 'body-parser';
 
 import config from '../common/config';
 import userRouter from './user';
 
 const app = new Express();
-const port = config.apiPort;
+const port = config.api.port;
 
+
+app.use( bodyParser.json() );
+app.use((req, res, next) => {
+  res.setHeader('Content-Type', 'application/json');
+  next();
+})
 
 app.use('/api/user', userRouter);
 

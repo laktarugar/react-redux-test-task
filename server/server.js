@@ -8,6 +8,7 @@ import qs from 'qs';
 import React from 'react';
 import { Provider } from 'react-redux';
 
+import ApiClient from '../common/api/ApiClient';
 import configureStore from '../common/store/configureStore';
 import UserApp from '../common/containers/UserApp';
 import { fetchCounter } from '../common/api/counter';
@@ -19,6 +20,10 @@ import { defaultState } from '../common/reducers/userReducer.js'
 const app = new Express();
 const port = 3000;
 
+import httpProxy from 'http-proxy';
+
+const proxy = httpProxy.createProxyServer({target: "http://localhost:3002"});
+
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
@@ -27,9 +32,15 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 // Use this middleware to server up static files built into dist
 app.use(require('serve-static')(path.join(__dirname, '../dist')));
 
-app.post('/', function (req, res) {
-  console.log('test act post', req.body);
+app.use(function (req, res, next) {
+  if (/^\/api/.test(req.url)) {
+    proxy.proxyRequest(req, res);
+  } else {
+    next();
+  }
+})
 
+app.post('/', function (req, res) {
   let newUser = new User(req.body.name, req.body.email);
   const initialState = {
     user: Object.assign({}, defaultState, {
@@ -42,8 +53,8 @@ app.post('/', function (req, res) {
   };
 
   // Create a new Redux store instance
-  let store = configureStore(initialState);
-  //console.log(store.dispatch(addWithCheck(newUser)));
+  const store = configureStore(initialState);
+
   store.dispatch(addWithCheck(newUser))
     .catch(
       (data) => {
@@ -72,7 +83,7 @@ function handleRender(req, res) {
   };
 
   // Create a new Redux store instance
-  let store = configureStore(initialState);
+  const store = configureStore(initialState);
 
   renderResponse(store, res);
 }

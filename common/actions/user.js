@@ -2,6 +2,8 @@
  * Created by alexanderklimenko on 9/17/15.
  */
 
+import User from '../model/User';
+
 export const CHECK_USER = 'CHECK_USER';
 
 export function checkUser(user) {
@@ -19,16 +21,34 @@ export function addUser(user) {
   }
 }
 
+export const ERR_ADD_USER = 'ERR_ADD_USER';
+
 export function addWithCheck(user) {
-  return (dispatch, getState) => {
+
+  user = Object.assign(new User(), user);
+
+  return (dispatch, getState, client) => {
     dispatch(checkUser(user));
 
     let state = getState();
     if (!!state.user.isValid) {
-      dispatch(addUser(user));
-      return Promise.resolve('ok');
+
+      return user.save(client)
+        .then(() => {
+          dispatch(addUser(user));
+          return Promise.resolve('ok');
+        }, (errors) => {
+          dispatch({
+            type: ERR_ADD_USER,
+            errors
+          });
+          return Promise.reject('fail');
+        });
+
     } else {
+
       return Promise.reject('fail');
+
     }
   }
 }
