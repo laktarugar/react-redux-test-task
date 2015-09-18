@@ -15,8 +15,6 @@ export const defaultState = {
 export default function userReducer(state = defaultState, action) {
   switch(action.type) {
     case CHECK_USER:
-      console.log(CHECK_USER, state, action);
-
       let isValid = true;
       let validErrors = {
         name: [],

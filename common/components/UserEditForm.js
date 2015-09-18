@@ -59,6 +59,8 @@ class UserEditForm extends Component {
     let name = React.findDOMNode(this.refs.name).value.trim();
     let email = React.findDOMNode(this.refs.email).value.trim();
 
+    console.log('name', name);
+
     this.setState({
       user:{
         name,
@@ -66,7 +68,10 @@ class UserEditForm extends Component {
       }
     });
 
-    this.props.check(this.state.user);
+    this.props.check({
+      name,
+      email
+    });
   }
 
   submitAction(e) {
