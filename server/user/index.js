@@ -19,6 +19,8 @@ router.post('/', function (req, res) {
   let user = req.body;
 
   if (!checkUniqueName(user.name)) {
+    user.id = id++;
+    data.push(user);
     return res.send(JSON.stringify(user));
   } else {
     return res.send(406, JSON.stringify({
